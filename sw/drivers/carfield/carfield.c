@@ -45,6 +45,7 @@ struct cardev_private_data {
     struct shared_mem l2_cont_0_mem;
     struct shared_mem l2_intl_1_mem;
     struct shared_mem l2_cont_1_mem;
+    struct shared_mem axi_rt_mem;
     struct shared_mem safety_island_mem;
     struct shared_mem integer_cluster_mem;
     struct shared_mem spatz_cluster_mem;
@@ -168,6 +169,12 @@ int card_mmap(struct file *filp, struct vm_area_struct *vma) {
         pr_info("Ready to map spatz_cluster\n");
         mapoffset = cardev_data->spatz_cluster_mem.pbase;
         psize = cardev_data->spatz_cluster_mem.size;
+        break;
+    case 400:
+        strncpy(type, "axi_rt", sizeof(type));
+        pr_info("Ready to map axi_rt\n");
+        mapoffset = cardev_data->axi_rt_mem.pbase;
+        psize = cardev_data->axi_rt_mem.size;
         break;
     default:
         pr_err("Unknown page offset\n");
@@ -460,6 +467,9 @@ int card_platform_driver_probe(struct platform_device *pdev) {
     probe_node(pdev, dev_data, &dev_data->l2_cont_0_mem, "l2-cont-0");
     probe_node(pdev, dev_data, &dev_data->l2_intl_1_mem, "l2-intl-1");
     probe_node(pdev, dev_data, &dev_data->l2_cont_1_mem, "l2-cont-1");
+
+    // Probe Axi-Realm
+    probe_node(pdev, dev_data, &dev_data->axi_rt_mem, "axi-rt");
 
     // Buffer list
     INIT_LIST_HEAD(&dev_data->test_head);
