@@ -46,6 +46,7 @@ struct cardev_private_data {
     struct shared_mem l2_intl_1_mem;
     struct shared_mem l2_cont_1_mem;
     struct shared_mem axi_rt_mem;
+    struct shared_mem dma_mem;
     struct shared_mem safety_island_mem;
     struct shared_mem integer_cluster_mem;
     struct shared_mem spatz_cluster_mem;
@@ -175,6 +176,12 @@ int card_mmap(struct file *filp, struct vm_area_struct *vma) {
         pr_info("Ready to map axi_rt\n");
         mapoffset = cardev_data->axi_rt_mem.pbase;
         psize = cardev_data->axi_rt_mem.size;
+        break;
+    case 500:
+        strncpy(type, "dma", sizeof(type));
+        pr_info("Ready to map dma\n");
+        mapoffset = cardev_data->dma_mem.pbase;
+        psize = cardev_data->dma_mem.size;
         break;
     default:
         pr_err("Unknown page offset\n");
